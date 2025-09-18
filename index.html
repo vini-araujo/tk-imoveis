@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<!-- JSON-LD da empresa -->
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "RealEstateAgent",
+        "name": "TK Matos Imóveis",
+        "url": "https://seusite.com.br/",
+        "logo": "https://seusite.com.br/imagens/TKlogo.jpeg",
+        "image": "https://seusite.com.br/imagens/TKlogo.jpeg",
+        "telephone": "+55 71 99688-6685",
+        "email": "teresa@tkmatosimoveis.com.br",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Rua Rio Grande do Sul, 882, sala 201/202",
+            "addressLocality": "Salvador",
+            "addressRegion": "BA",
+            "postalCode": "41830-140",
+            "addressCountry": "BR"
+        },
+        "sameAs": ["https://www.instagram.com/tkmatosimoveis"]
+    }
+</script>
+
+<!-- (Opcional) JSON-LD do site -->
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://seusite.com.br/",
+        "name": "TK Matos Imóveis"
+    }
+</script>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>TK Matos Imóveis</title>
+    <link rel="stylesheet" href="style.css"/>
+    <script defer src="script.js"></script>
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <div class="container">
+        <img src="imagens/TK logo.jpeg" alt="TK Matos Imóveis" class="logo"/>
+        <nav>
+            <a href="index.html">Início</a>
+            <a href="contato.html">Contato</a>
+        </nav>
+        <button id="theme-toggle" aria-label="Alternar tema" class="theme-toggle">🌙</button>
+
+    </div>
+</header>
+
+<section class="hero">
+    <div class="container">
+        <h2>Encontre seu novo lar com a TK Matos Imóveis</h2>
+        <p>Imóveis selecionados com qualidade, confiança e segurança.</p>
+        <a class="btn" href="#filtros">Ver imóveis</a>
+    </div>
+</section>
+
+<main class="container">
+    <h2>Imóveis em Destaque</h2>
+
+    <!-- Filtros -->
+    <form id="filtros" class="filtros">
+        <div class="filtros-row">
+            <label>
+                Finalidade
+                <select id="f-finalidade">
+                    <option value="">Todas</option>
+                    <option value="comprar">Comprar</option>
+                    <option value="alugar">Alugar</option>
+                </select>
+            </label>
+            <label>
+                Tipo
+                <select id="f-tipo">
+                    <option value="">Todos</option>
+                </select>
+            </label>
+            <label>
+                Bairro
+                <select id="f-bairro">
+                    <option value="">Todos</option>
+                </select>
+            </label>
+            <label>
+                Preço mín.
+                <input id="f-preco-min" type="number" placeholder="0" min="0" step="1000"/>
+            </label>
+            <label>
+                Preço máx.
+                <input id="f-preco-max" type="number" placeholder="∞" min="0" step="1000"/>
+            </label>
+        </div>
+
+        <div class="filtros-row">
+            <label>
+                Quartos
+                <select id="f-quartos">
+                    <option value="">Todos</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                </select>
+            </label>
+            <label>
+                Suítes
+                <select id="f-suites">
+                    <option value="">Todas</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                </select>
+            </label>
+            <label>
+                Vagas
+                <select id="f-vagas">
+                    <option value="">Todas</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                </select>
+            </label>
+            <label>
+                Área mín. (m²)
+                <input id="f-area-min" type="number" placeholder="0" min="0" step="10"/>
+            </label>
+            <label>
+                Buscar
+                <input id="f-busca" type="text" placeholder="Título, descrição, tag..."/>
+            </label>
+            <label>
+                Ordenar
+                <select id="f-ordenar">
+                    <option value="recentes">Mais recentes</option>
+                    <option value="preco-asc">Preço: menor → maior</option>
+                    <option value="preco-desc">Preço: maior → menor</option>
+                    <option value="area-desc">Área: maior → menor</option>
+                </select>
+            </label>
+            <div class="filtros-actions">
+                <button type="reset" class="btn-sec">Limpar</button>
+            </div>
+        </div>
+
+        <div class="filtros-info">
+            <span id="total-encontrados">Carregando...</span>
+        </div>
+    </form>
+
+    <!-- Lista -->
+    <div id="lista-imoveis" class="grid"></div>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 TK Matos Imóveis · Todos os direitos reservados</p>
+    </div>
+</footer>
+
+<!-- Modal de detalhes -->
+<div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">×</button>
+        <div id="modal-body"></div>
+    </div>
+</div>
+</body>
+</html>

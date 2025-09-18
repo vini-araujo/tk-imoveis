@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Painel · TK Matos Imóveis</title>
+    <link rel="stylesheet" href="style.css"/>
+    <style>
+        main.container { max-width: 980px; }
+        form.painel { background:#fff; padding:1rem; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,.08); display:grid; gap:1rem; }
+        .grid-3 { display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:1rem; }
+        textarea { width: 100%; min-height: 80px; }
+        .table { width:100%; border-collapse: collapse; }
+        .table th,.table td { border-bottom:1px solid #eee; padding:.5rem; text-align:left; }
+        .actions { display:flex; gap:.5rem; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <img src="imagens/TKlogo.jpeg" alt="TK Matos Imóveis" class="logo"/>
+        <nav>
+            <a href="index.html">Início</a>
+            <a href="contato.html">Contato</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <h2>Painel de Imóveis</h2>
+
+    <div class="actions" style="margin: .5rem 0 1rem">
+        <input type="file" id="importar" accept=".json"/>
+        <button id="btn-exportar" class="btn-sec">Exportar imoveis.json</button>
+        <button id="btn-limpar" class="btn-sec">Limpar lista (local)</button>
+    </div>
+
+    <form class="painel" id="form-imovel">
+        <div class="grid-3">
+            <label>ID <input name="id" type="number" required min="1"/></label>
+            <label>Finalidade
+                <select name="finalidade" required>
+                    <option value="comprar">Comprar</option>
+                    <option value="alugar">Alugar</option>
+                </select>
+            </label>
+            <label>Tipo <input name="tipo" placeholder="Apartamento, Casa, Studio..." required/></label>
+            <label>Título <input name="titulo" required/></label>
+            <label>Preço <input name="preco" type="number" step="500" min="0" required/></label>
+            <label>Bairro <input name="bairro" required/></label>
+            <label>Cidade <input name="cidade" value="Salvador" required/></label>
+            <label>UF <input name="uf" value="BA" maxlength="2" required/></label>
+            <label>Área (m²) <input name="area" type="number" step="1" min="0"/></label>
+            <label>Quartos <input name="quartos" type="number" min="0"/></label>
+            <label>Suítes <input name="suites" type="number" min="0"/></label>
+            <label>Banheiros <input name="banheiros" type="number" min="0"/></label>
+            <label>Vagas <input name="vagas" type="number" min="0"/></label>
+            <label>Condomínio/mês <input name="condominio" type="number" min="0" step="50"/></label>
+            <label>IPTU (ano ou mês) <input name="iptu" type="number" min="0" step="10"/></label>
+            <label>Destaque
+                <select name="destaque">
+                    <option value="false">Não</option>
+                    <option value="true">Sim</option>
+                </select>
+            </label>
+        </div>
+
+        <label>Descrição
+            <textarea name="descricao" placeholder="Fale dos diferenciais do imóvel"></textarea>
+        </label>
+        <label>Tags (separe por vírgula)
+            <input name="tags" placeholder="varanda, mobiliado, elevador"/>
+        </label>
+        <label>Imagens (URLs separadas por quebra de linha)
+            <textarea name="imagens" placeholder="imagens/casa1.jpeg"></textarea>
+        </label>
+
+        <div class="actions">
+            <button type="submit" class="btn">Adicionar à lista</button>
+        </div>
+    </form>
+
+    <h3 style="margin-top:1.5rem">Imóveis em edição (local)</h3>
+    <table class="table" id="tabela">
+        <thead>
+        <tr>
+            <th>ID</th><th>Título</th><th>Finalidade</th><th>Bairro</th><th>Preço</th><th>Ações</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 TK Matos Imóveis · Todos os direitos reservados</p>
+    </div>
+</footer>
+
+<script>
+    const LS_KEY = 'tk_imoveis_edicao';
+    let lista = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
+
+    const form = $('#form-imovel');
+    const tabelaBody = $('#tabela tbody');
+    const inputImport = $('#importar');
+
+    desenhar();
+
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const fd = new FormData(form);
+      const obj = Object.fromEntries(fd.entries());
+
+      const novo = {
+        id: Number(obj.id),
+        criadoEm: new Date().toISOString(),
+        finalidade: obj.finalidade,
+        tipo: obj.tipo.trim(),
+        titulo: obj.titulo.trim(),
+        preco: Number(obj.preco),
+        bairro: obj.bairro.trim(),
+        cidade: obj.cidade.trim(),
+        uf: obj.uf.trim().toUpperCase(),
+        area: Number(obj.area || 0),
+        quartos: Number(obj.quartos || 0),
+        suites: Number(obj.suites || 0),
+        banheiros: Number(obj.banheiros || 0),
+        vagas: Number(obj.vagas || 0),
+        descricao: (obj.descricao || '').trim(),
+        condominio: Number(obj.condominio || 0),
+        iptu: Number(obj.iptu || 0),
+        tags: (obj.tags || '').split(',').map(s => s.trim()).filter(Boolean),
+        imagens: (obj.imagens || '').split('\n').map(s => s.trim()).filter(Boolean),
+        destaque: obj.destaque === 'true'
+      };
+
+      // valida duplicidade de ID
+      if (lista.some(x => x.id === novo.id)) {
+        alert('Já existe um imóvel com esse ID. Altere o ID.');
+        return;
+      }
+
+      if (!novo.imagens.length) novo.imagens = ['imagens/casa1.jpeg'];
+
+      lista.push(novo);
+      salvar();
+      form.reset();
+      desenhar();
+    });
+
+    function salvar() { localStorage.setItem(LS_KEY, JSON.stringify(lista)); }
+
+    function desenhar() {
+      tabelaBody.innerHTML = '';
+      lista.sort((a,b) => b.id - a.id);
+      for (const i of lista) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${i.id}</td>
+          <td>${i.titulo}</td>
+          <td>${i.finalidade}</td>
+          <td>${i.bairro}</td>
+          <td>${(i.preco || 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</td>
+          <td>
+            <button data-ac="del" data-id="${i.id}" class="btn-sec">Remover</button>
+          </td>
+        `;
+        tabelaBody.appendChild(tr);
+      }
+      tabelaBody.querySelectorAll('button[data-ac="del"]').forEach(b=>{
+        b.onclick = () => {
+          const id = Number(b.dataset.id);
+          lista = lista.filter(x => x.id !== id);
+          salvar(); desenhar();
+        }
+      });
+    }
+
+    // Importar imoveis.json existente e mesclar
+    inputImport.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const arr = JSON.parse(text);
+        // evita IDs duplicados
+        const idsLocal = new Set(lista.map(x => x.id));
+        const filtrado = arr.filter(x => !idsLocal.has(x.id));
+        lista = [...lista, ...filtrado];
+        salvar(); desenhar();
+        alert(`Importados ${filtrado.length} imóveis (ignorados duplicados).`);
+      } catch (err) {
+        alert('Arquivo inválido.');
+      } finally {
+        e.target.value = '';
+      }
+    });
+
+    // Exportar
+    $('#btn-exportar').addEventListener('click', async () => {
+      // Se quiser, busca imoveis.json atual e mescla (opcional)
+      let base = [];
+      try {
+        const res = await fetch('imoveis.json', {cache:'no-store'});
+        if (res.ok) base = await res.json();
+      } catch {}
+      // Mescla base + lista (prioriza IDs da lista local)
+      const mapa = new Map(base.map(x => [x.id, x]));
+      for (const i of lista) mapa.set(i.id, i);
+      const final = Array.from(mapa.values()).sort((a,b)=>b.id - a.id);
+
+      const blob = new Blob([JSON.stringify(final, null, 2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'imoveis.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // Limpar
+    $('#btn-limpar').addEventListener('click', () => {
+      if (confirm('Limpar a lista local?')) {
+        lista = []; salvar(); desenhar();
+      }
+    });
+</script>
+</body>
+</html>
