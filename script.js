@@ -1,5 +1,5 @@
 // ---- CONFIGURAÇÕES ----
-const WA_NUMBER = '5541991115372'; // <— ajuste aqui
+const WA_NUMBER = '557199688-6685'; // <— ajuste aqui
 const WA_PREFIX = `https://wa.me/${WA_NUMBER}?text=`;
 
 // ===== JSON-LD Helpers =====
