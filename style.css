@@ -43,6 +43,8 @@ header{
   backdrop-filter:saturate(140%) blur(6px);
   background-color: rgba(255,255,255,.8);
   border-bottom:1px solid var(--borda);
+
+
 }
 header .container{ display:flex; align-items:center; gap:1rem; padding:.9rem 0; }
 .logo{ height:92px; width:auto; object-fit:contain; }
@@ -55,7 +57,8 @@ nav a:hover{ color:var(--verde); background:rgba(46,125,50,.08); }
 
 /* HERO mais alto e tipografia maior */
 .hero{
-  background: linear-gradient(135deg, var(--verde) 0%, #1e5a23 100%);
+ /* background: linear-gradient(135deg, var(--verde) 0%, #1e5a23 100%);*/
+  background: linear-gradient(135deg, #1b1f1c 0%, var(--verde) 100%);
   color:var(--branco); padding:4.2rem 0;
   text-align:center; display:grid; place-items:center;
 }
@@ -147,8 +150,8 @@ main h2{
 .modal{ position:fixed; inset:0; background:rgba(20,20,20,.5); display:none; align-items:center; justify-content:center; padding:1rem; }
 .modal.show{ display:flex; }
 .modal-content{
-  background:#fff; border-radius:16px; max-width:min(980px, 92vw); width:100%;
-  padding:1.2rem 1.2rem 1.4rem; box-shadow:0 20px 60px rgba(0,0,0,.25); border:1px solid var(--borda);
+  background:#fff; border-radius:16px; max-width:min(1180px, 94vw); width:100%;
+    padding:1.2rem 1.2rem 1.4rem; box-shadow:0 20px 60px rgba(0,0,0,.25); border:1px solid var(--borda);
 }
 .modal-close{ float:right; font-size:1.8rem; background:transparent; border:0; cursor:pointer; line-height:1; }
 .modal h3{ margin:0 0 .4rem; font-size:1.4rem; }
@@ -217,8 +220,9 @@ html[data-theme="dark"] .theme-toggle{
 }
 
 header .container{
-  padding: 1.1rem 0;      /* dá um respiro extra pro header */
+  padding: 0.5rem 0;      /* dá um respiro extra pro header */
 }
+
 
 /* Menu um pouco maior */
 nav a{
@@ -234,3 +238,541 @@ html{ font-size: 19px; }   /* se quiser ainda maior: 20px */
   .logo{ height: 88px; }
   nav a{ font-size: 1.05rem; padding: .5rem .7rem; }
 }
+
+/* === SOBRE NÓS === */
+.about-hero{
+  background: linear-gradient(135deg, #1b1f1c 0%, var(--verde) 100%);
+}
+html[data-theme="dark"] .about-hero{
+  background: linear-gradient(135deg, #0f1114 0%, #0b3e17 100%);
+}
+
+.titulo-sec{
+  margin: .2rem 0 1rem;
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  letter-spacing: -.01em;
+  color: var(--verde);
+}
+
+.sobre-bloco{
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  padding: 1.2rem;
+  box-shadow: var(--sombra);
+  margin: 1.4rem 0;
+}
+
+.sobre-grid{
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: 1.4fr .9fr;
+}
+@media (max-width: 900px){
+  .sobre-grid{ grid-template-columns: 1fr; }
+}
+
+.sobre-card{
+  background: linear-gradient(180deg, #f7faf7, #fff);
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  padding: 1rem;
+}
+html[data-theme="dark"] .sobre-card{
+  background: linear-gradient(180deg, #121416, #16181b);
+}
+.bullets{ margin: 0; padding-left: 1.1rem; }
+.bullets li{ margin: .4rem 0; }
+
+/* Stats */
+.stats{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+.stat{
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: var(--sombra);
+}
+.stat-num{
+  display: block;
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  font-weight: 800;
+  color: var(--verde);
+  letter-spacing: -.02em;
+}
+.stat-label{ color: var(--cinza-2); }
+.nota{ margin-top: .6rem; color: #888; font-size: .95rem; }
+
+/* Valores */
+.values{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.value{
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: var(--sombra);
+}
+.value h3{ margin: .2rem 0 .4rem; }
+
+/* Equipe */
+.team{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.team-card{
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: var(--sombra);
+}
+.team-card img{
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: .6rem;
+}
+
+/* CTA */
+.cta .cta-card{
+  background: linear-gradient(135deg, var(--verde), #1e5a23);
+  color: #fff;
+  border-radius: 16px;
+  padding: 1.4rem;
+  text-align: center;
+}
+.cta .cta-actions{ margin-top: .8rem; display:flex; gap:.6rem; justify-content:center; flex-wrap: wrap; }
+.cta .btn{ background:#fff; color: var(--verde); }
+.cta .btn.link-whats{ background:#25d366; color:#fff; }
+
+/* Ajustes de tipografia para Sobre */
+.pg-sobre main p{ font-size: 1.02rem; line-height: 1.65; }
+
+/* === Mapa / Localização === */
+.mapa-bloco .endereco{
+  margin-bottom: .8rem;
+  color: var(--cinza-2);
+  font-size: 1.02rem;
+}
+
+.mapa-wrap{
+  position: relative;
+  width: 100%;
+  /* proporção 16:9 responsiva */
+  padding-bottom: 56.25%;
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--sombra);
+  background: var(--branco);
+}
+
+.mapa-wrap iframe{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
+}
+
+/* Dark mode: bordas e fundo do contêiner */
+html[data-theme="dark"] .mapa-wrap{
+  background: #0f1114;
+  border-color: #26292e;
+}
+
+header nav a{
+  font-size: 1.3rem;       /* ajuste aqui: 1.2–1.4rem fica ótimo */
+  padding: .7rem 1.1rem;   /* opcional: mais respiro */
+}
+
+/* Mobile: segura um pouco pra não estourar */
+@media (max-width: 640px){
+  header nav a{ font-size: 1.1rem; }
+}
+
+/* Slider principal dentro do modal */
+.swiper { width: 100%; border-radius: 14px; box-shadow: var(--sombra); }
+.swiper-slide img { width: 100%; height: clamp(260px, 40vw, 520px); object-fit: cover; display: block; }
+
+/* Thumbs */
+.swiper-thumbs { margin-top: .6rem; }
+.swiper-thumbs .swiper-slide { width: 100px; height: 70px; opacity: .65; cursor: pointer; }
+.swiper-thumbs .swiper-slide-thumb-active { opacity: 1; outline: 2px solid var(--verde); border-radius: 8px; }
+.swiper-thumbs img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+
+/* Navegação/pontos */
+.swiper-button-prev, .swiper-button-next {
+  color: #fff; width: 42px; height: 42px; background: rgba(0,0,0,.55); border-radius: 999px;
+}
+.swiper-button-prev::after, .swiper-button-next::after { font-size: 18px; }
+.swiper-pagination-bullet { background: #cfd3d8; opacity: 1; }
+.swiper-pagination-bullet-active { background: var(--verde); }
+
+html[data-theme="dark"] .swiper { background: #0f1114; border: 1px solid #26292e; }
+
+.modal .imovel-info,
+[data-modal="imovel"] .imovel-info {
+  font-size: clamp(14px, 1.6vw, 18px);
+  line-height: 1.55;
+  color: oklch(0.22 0 0 / 0.92); /* texto mais escuro p/ contraste */
+  letter-spacing: 0.2px;
+}
+
+/* título do imóvel */
+.modal .imovel-info .imovel-titulo {
+  font-size: clamp(20px, 2.2vw, 30px);
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0 0 8px 0;
+  color: var(--verde, #0a7a4b);
+}
+
+/* endereço/linha secundária */
+.modal .imovel-info .imovel-endereco {
+  font-size: clamp(14px, 1.5vw, 18px);
+  opacity: 0.9;
+  margin-bottom: 12px;
+}
+
+/* preço em destaque */
+.modal .imovel-info .imovel-preco {
+  font-size: clamp(22px, 2.6vw, 34px);
+  font-weight: 900;
+  color: oklch(0.24 0.02 150); /* verde escuro ou ajuste para sua paleta */
+  margin: 4px 0 14px 0;
+}
+
+/* “metadados” (área, quartos, banheiros, vagas) em linhas mais legíveis */
+.modal .imovel-info .imovel-metas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+  margin: 0 0 14px 0;
+  font-size: clamp(14px, 1.5vw, 18px);
+}
+
+/* descrição com boa leitura */
+.modal .imovel-info .imovel-descricao {
+  font-size: clamp(14px, 1.6vw, 18px);
+  line-height: 1.6;
+  margin: 8px 0 14px 0;
+}
+
+/* chips/tags com melhor contraste e tamanho */
+.modal .imovel-info .imovel-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 14px 0;
+}
+.modal .imovel-info .imovel-tags .tag {
+  font-size: clamp(12px, 1.4vw, 14px);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--bege, #f5f0e8) 85%, white);
+  border: 1px solid color-mix(in oklab, var(--verde, #0a7a4b) 18%, #0000);
+  color: oklch(0.22 0 0);
+}
+
+/* botões de ação mais “clicáveis” */
+.modal .imovel-info .acoes {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.modal .imovel-info .acoes .btn {
+  font-size: clamp(14px, 1.6vw, 16px);
+  padding: 10px 14px;
+  border-radius: 999px;
+}
+
+/* espaçamento vertical geral entre blocos */
+.modal .imovel-info > * + * {
+  margin-top: 8px;
+}
+
+/* responsivo: quando a info vai para baixo do slider, aumente um pouco a escala */
+@media (max-width: 900px) {
+  .modal .imovel-info,
+  [data-modal="imovel"] .imovel-info {
+    font-size: clamp(15px, 1.9vw, 19px);
+    line-height: 1.6;
+  }
+  .modal .imovel-info .imovel-preco {
+    font-size: clamp(24px, 5vw, 36px);
+  }
+}
+
+/* ====== LEGIBILIDADE NO MODAL (elementos atuais: h3 e p) ====== */
+#modal #modal-body {
+  padding-top: 6px;
+}
+
+#modal #modal-body > h3 {
+  font-size: clamp(22px, 2.6vw, 34px);
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 6px 0 10px 0;
+  color: var(--cinza, #232323);
+  letter-spacing: 0.2px;
+}
+
+#modal #slider-area {
+  margin-bottom: 12px; /* espaço entre o slider e o texto */
+}
+
+#modal #modal-body > p {
+  font-size: clamp(15px, 1.8vw, 19px);
+  line-height: 1.65;
+  color: color-mix(in oklab, var(--cinza, #232323) 92%, #0000);
+  letter-spacing: 0.2px;
+}
+
+/* Dark mode */
+html[data-theme="dark"] #modal #modal-body > h3 {
+  color: var(--cinza, #f1f3f5);
+}
+html[data-theme="dark"] #modal #modal-body > p {
+  color: var(--cinza-2, #c6c9ce);
+}
+
+/* Mobile: um pouco maior e com mais respiro */
+@media (max-width: 900px) {
+  #modal #modal-body > h3 {
+    font-size: clamp(24px, 6vw, 36px);
+  }
+  #modal #modal-body > p {
+    font-size: clamp(16px, 2.2vw, 20px);
+    line-height: 1.7;
+  }
+}
+
+/* ===== Modal de Imóvel — tipografia maior e mais infos ===== */
+#modal { --imv-gap: 10px; }
+
+#modal #modal-body { padding-top: 8px; }
+
+/* Título bem grande */
+#modal .imv-titulo{
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 800;
+  line-height: 1.22;
+  margin: 0 0 8px 0;
+  letter-spacing: .2px;
+}
+
+/* Espaço entre slider e conteúdo */
+#modal #slider-area{ margin-bottom: 12px; }
+
+/* Badges (finalidade, tipo, bairro, m², quartos etc.) */
+#modal .imv-badges{ display:flex; flex-wrap:wrap; gap:8px; margin: 2px 0 10px 0; }
+#modal .imv-badge{
+  display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px;
+  background: color-mix(in oklab, var(--bege, #f5f0e8) 85%, white);
+  border: 1px solid color-mix(in oklab, var(--verde, #0a7a4b) 18%, #0000);
+  font-size: clamp(12px, 1.5vw, 14px);
+}
+
+/* Grade de informações (rótulo/valor) — fonte maior */
+#modal .imv-grid{ display:grid; gap: 6px; margin-bottom: 8px; }
+#modal .imv-row{
+  display:grid; grid-template-columns: 150px 1fr; gap: 12px;
+  align-items: baseline; padding: 6px 0; border-bottom: 1px dashed rgba(0,0,0,.08);
+  font-size: clamp(16px, 2.1vw, 21px); line-height: 1.6;
+}
+#modal .imv-row--destaque .imv-val{
+  font-size: clamp(24px, 3.2vw, 38px); font-weight: 900;
+}
+#modal .imv-lbl{ opacity:.7; }
+#modal .imv-val .imv-chip{
+  display:inline-flex; padding:4px 8px; border-radius:999px; margin-right:6px; margin-bottom:6px;
+  background: color-mix(in oklab, var(--bege, #f5f0e8) 82%, white);
+  border: 1px solid rgba(0,0,0,.06); font-size: .92em;
+}
+
+/* Descrição bem legível */
+#modal .imv-desc{
+  margin: 10px 0 12px 0;
+  font-size: clamp(16px, 2.2vw, 22px);
+  line-height: 1.75;
+}
+
+/* Ações de contato grandes */
+#modal .imv-acoes{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 6px; }
+#modal .imv-acoes .btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size: clamp(16px, 2vw, 19px); font-weight: 700;
+  padding: 13px 18px; border-radius: 999px; text-decoration:none;
+  border: 1px solid rgba(0,0,0,.08); background:#f6f7f8;
+}
+#modal .imv-acoes .btn--whats{ background:#25D366; color:#fff; }
+
+/* Ajustes mobile */
+@media (max-width: 900px){
+  #modal .imv-row{ grid-template-columns: 120px 1fr; }
+}
+
+/* ===== Modal: cabe inteiro na janela e rola por dentro ===== */
+.modal{ padding: 2rem 1rem; } /* mais respiro nas bordas da tela */
+.modal-content{
+  max-width: min(1100px, 96vw);
+  max-height: min(92vh, 1000px);   /* NUNCA passa de 92% da altura da tela */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+#modal #modal-body{
+  overflow: auto;                   /* rolagem interna */
+  overscroll-behavior: contain;     /* evita “puxar” o fundo */
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;               /* espaço pro scroll */
+}
+
+/* Opcional: scrollbar discreta (webkit) */
+#modal #modal-body::-webkit-scrollbar{ width: 8px; }
+#modal #modal-body::-webkit-scrollbar-thumb{ background: #d6d6d6; border-radius: 8px; }
+html[data-theme="dark"] #modal #modal-body::-webkit-scrollbar-thumb{ background: #3a3f45; }
+
+/* ===== Slider: altura baseada na ALTURA da tela (vh), não na largura ===== */
+/* Troca a regra antiga de altura das imagens do slide */
+.swiper-slide img{
+  width: 100%;
+  height: clamp(220px, 44vh, 520px); /* antes era 40vw; agora usa 48vh */
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+}
+
+/* Thumbs um pouco mais compactas quando a altura aperta */
+@media (max-height: 740px){
+  .swiper-slide img{ height: clamp(200px, 42vh, 480px); }
+  .swiper-thumbs .swiper-slide{ height: 60px; }
+}
+
+/* === Modal MAIOR (apenas tamanho) === */
+.modal { padding: 2.2rem 1.2rem; }
+
+.modal-content{
+  /* + largo e + alto, mas sem estourar a tela */
+  max-width: min(1420px, 98vw);
+  max-height: 96vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  padding: 1.4rem 1.4rem 1.6rem;
+}
+
+/* corpo do modal: aproveita melhor a altura */
+#modal #modal-body{
+  overflow: auto;                 /* rola internamente se precisar */
+  -webkit-overflow-scrolling: touch;
+  padding-right: 6px;
+  padding- top:12px         /* espaço pro scroll */
+}
+
+/* opcional: modal um pouco maior em telas MUITO grandes */
+@media (min-width: 1440px){
+  .modal-content{ max-width: 1420px; }
+}
+
+/* Dá mais respiro no topo do conteúdo rolável do modal */
+.modal-content{ padding-top: 0 !important; }       /* evita "empurrar" o título pra fora */
+#modal #modal-body{
+  padding-top: 18px !important;                    /* garante espaço acima do título */
+}
+
+/* Título visível e fixo (cobre todas as variações: .imv-titulo ou <h3>) */
+#modal .imv-titulo,
+#modal #modal-body > h3{
+  position: sticky;
+  top: 14px;                                       /* descola do topo do container */
+  z-index: 10;
+  display: block;
+  margin: 0;
+  padding: 8px 0 10px;
+  background: var(--branco);
+  border-bottom: 1px solid color-mix(in oklab, var(--borda) 70%, #0000);
+  /* opcional: leve sombra pra destacar quando “grudar” */
+  box-shadow: 0 2px 0 rgba(0,0,0,0.04);
+}
+
+/* Cabeçalho fixo do modal (fora da área rolável) */
+#modal #modal-head{
+  padding: 10px 16px 8px;
+  background: var(--branco);
+  border-bottom: 1px solid var(--borda);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+/* Título grande (sem sticky agora, porque está fora do scroll) */
+#modal #modal-head .imv-titulo{
+  position: static;
+  margin: 0;
+  padding: 0;
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 800;
+  line-height: 1.22;
+}
+
+/* Área rolável logo abaixo do cabeçalho */
+#modal #modal-body{
+  padding: 12px 16px 16px;     /* respiro interno */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Garante que o container do modal acomode o cabeçalho + corpo */
+.modal-content{
+  display: flex;
+  flex-direction: column;
+  max-height: 96vh;            /* já está maior, mantém limite da janela */
+  padding: 0;                  /* sem padding, quem tem padding é head/body */
+}
+
+/* Botão de fechar não sobrepor o título */
+.modal-close{
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 30;
+}
+
+/* (opcional) aumenta um pouco a largura para caber mais info */
+@media (min-width: 1024px){
+  .modal-content{ max-width: min(1320px, 98vw); }
+}
+
+/* Modal por cima do header */
+.modal{
+  position: fixed;       /* já estava, garante */
+  inset: 0;
+  z-index: 9999;         /* ↑ mais alto que o header */
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+/* Quando o modal abre, travar scroll do body */
+body.modal-open{
+  overflow: hidden;
+}
+
+
+
+
+
