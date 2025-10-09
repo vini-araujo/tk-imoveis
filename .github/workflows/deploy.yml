@@ -1,20 +1,25 @@
 name: Deploy to cPanel via rsync
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]   # mude se usar outra branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Start ssh-agent and add key
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-passphrase:  ${{ secrets.SSH_PASSPHRASE }}
 
       - name: Trust cPanel host
+        run: ssh-keyscan -H br.brasil111-7590.com.br >> ~/.ssh/known_hosts
+
+      - name: Rsync to public_html
         run: |
-          ssh-keyscan -H br.brasil111-7590.com.br >> ~/.ssh/known_hosts
+          rsync -az --delete \
+            --exclude ".git" --exclude ".github" --exclude "node_modules" \
+            ./ tkmatosi@br.brasil111-7590.com.br:/home/tkmatosi/public_html/
