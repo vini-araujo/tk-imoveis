@@ -37,7 +37,9 @@
 
     <form class="painel" id="form-imovel">
         <div class="grid-3">
-            <label>ID <input name="id" type="number" required min="1"/></label>
+            <label>ID (opcional)
+                <input name="id" type="number" min="1" placeholder="deixe em branco para gerar automaticamente"/>
+            </label>
             <label>Finalidade
                 <select name="finalidade" required>
                     <option value="comprar">Comprar</option>
@@ -77,8 +79,95 @@
 
         <div class="actions">
             <button type="submit" class="btn">Adicionar à lista</button>
+            <button type="button" id="btn-publicar">Publicar na planilha</button>
         </div>
     </form>
+
+    <!-- ====== CONSTS DO ENDPOINT ====== -->
+    <script>
+        // URL do "New deployment → Web app" do Apps Script (sem espaço no final!)
+        const ENDPOINT  = 'https://script.google.com/macros/s/AKfycbzO9a6ZR7475-VyzXZvQ-qtRTwuCgLaQhJEw3LSKztHFngF_NxvesWaI5AU-rrUN6Ry/exec';
+        // Mesmo TOKEN que você definiu no Apps Script
+        const API_TOKEN = 'SEU_TOKEN_FORTE_AQUI';
+    </script>
+
+    <!-- ====== PUBLICAR DIRETO NA PLANILHA (POST + TOKEN) ====== -->
+    <script>
+        // Helpers
+        const tempId = () => `tmp-${Date.now()}-${Math.floor(Math.random()*1000)}`;
+        function splitLines(v=''){ return String(v).split('\n').map(s=>s.trim()).filter(Boolean); }
+        function splitTags(v=''){ return String(v).split(',').map(s=>s.trim()).filter(Boolean); }
+
+        // Coleta dados do form no padrão da planilha
+        function coletarImovelDoForm(form){
+          const get = (sel) => form.querySelector(sel)?.value?.trim() || '';
+          const idStr = get('[name="id"]');
+          const idNum = idStr ? Number(idStr) : undefined;
+
+          const base = {
+            finalidade: get('[name="finalidade"]').toLowerCase(),
+            tipo: get('[name="tipo"]'),
+            titulo: get('[name="titulo"]'),
+            preco: Number(get('[name="preco"]')) || 0,
+            bairro: get('[name="bairro"]'),
+            cidade: get('[name="cidade"]') || 'Salvador',
+            uf: (get('[name="uf"]') || 'BA').toUpperCase(),
+            area: Number(get('[name="area"]')) || 0,
+            quartos: Number(get('[name="quartos"]')) || 0,
+            suites: Number(get('[name="suites"]')) || 0,
+            banheiros: Number(get('[name="banheiros"]')) || 0,
+            vagas: Number(get('[name="vagas"]')) || 0,
+            descricao: get('[name="descricao"]'),
+            condominio: Number(get('[name="condominio"]')) || 0,
+            iptu: Number(get('[name="iptu"]')) || 0,
+            tags: splitTags(get('[name="tags"]')),
+            imagens: splitLines(get('[name="imagens"]')),
+            destaque: (get('[name="destaque"]') || '').toLowerCase() === 'true'
+          };
+          // Para o POST, não incluímos id quando em branco (servidor gera)
+          // Se o usuário digitou um número, enviamos
+          if (!Number.isNaN(idNum) && idNum) base.id = idNum;
+          return base;
+        }
+
+        async function publicarDireto(novo){
+          const payload = { ...novo, token: API_TOKEN };
+          const res = await fetch(ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+          return data; // { ok:true, id: ... }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+          const form = document.getElementById('form-imovel');
+          const btn  = document.getElementById('btn-publicar');
+
+          btn?.addEventListener('click', async () => {
+            if (!form) return alert('Formulário não encontrado.');
+            const titulo = form.querySelector('[name="titulo"]')?.value.trim();
+            const finalidade = form.querySelector('[name="finalidade"]')?.value.trim();
+            const preco = form.querySelector('[name="preco"]')?.value.trim();
+            if (!titulo || !finalidade || !preco) return alert('Preencha Título, Finalidade e Preço.');
+
+            btn.disabled = true; const original = btn.textContent; btn.textContent = 'Publicando...';
+            try{
+              const novo = coletarImovelDoForm(form);
+              const out = await publicarDireto(novo);
+              alert('Publicado com sucesso! ID: ' + out.id);
+              form.reset();
+            }catch(err){
+              console.error(err);
+              alert('Erro ao publicar: ' + err.message);
+            }finally{
+              btn.disabled = false; btn.textContent = original;
+            }
+          });
+        });
+    </script>
 
     <h3 style="margin-top:1.5rem">Imóveis em edição (local)</h3>
     <table class="table" id="tabela">
@@ -97,6 +186,7 @@
     </div>
 </footer>
 
+<!-- ====== LÓGICA LOCAL (lista, importar, exportar) ====== -->
 <script>
     const LS_KEY = 'tk_imoveis_edicao';
     let lista = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
@@ -110,13 +200,18 @@
 
     desenhar();
 
+    // Adicionar à lista (localStorage)
     form.addEventListener('submit', (ev) => {
       ev.preventDefault();
       const fd = new FormData(form);
       const obj = Object.fromEntries(fd.entries());
 
+      // se id vazio, cria id temporário apenas para organizar localmente
+      const idNum = obj.id ? Number(obj.id) : null;
+      const idLocal = idNum || tempId();
+
       const novo = {
-        id: Number(obj.id),
+        id: idLocal,
         criadoEm: new Date().toISOString(),
         finalidade: obj.finalidade,
         tipo: obj.tipo.trim(),
@@ -138,9 +233,9 @@
         destaque: obj.destaque === 'true'
       };
 
-      // valida duplicidade de ID
-      if (lista.some(x => x.id === novo.id)) {
-        alert('Já existe um imóvel com esse ID. Altere o ID.');
+      // valida duplicidade de ID apenas se for número
+      if (idNum && lista.some(x => Number(x.id) === idNum)) {
+        alert('Já existe um imóvel com esse ID numérico. Altere o ID.');
         return;
       }
 
@@ -156,8 +251,12 @@
 
     function desenhar() {
       tabelaBody.innerHTML = '';
-      lista.sort((a,b) => b.id - a.id);
-      for (const i of lista) {
+      // ordena: numéricos primeiro desc, depois temporários
+      const num = lista.filter(x => typeof x.id === 'number').sort((a,b)=>b.id - a.id);
+      const tmp = lista.filter(x => typeof x.id !== 'number');
+      const ordenada = [...num, ...tmp];
+
+      for (const i of ordenada) {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${i.id}</td>
@@ -173,8 +272,8 @@
       }
       tabelaBody.querySelectorAll('button[data-ac="del"]').forEach(b=>{
         b.onclick = () => {
-          const id = Number(b.dataset.id);
-          lista = lista.filter(x => x.id !== id);
+          const id = b.dataset.id;
+          lista = lista.filter(x => String(x.id) !== String(id));
           salvar(); desenhar();
         }
       });
@@ -187,12 +286,12 @@
       try {
         const text = await file.text();
         const arr = JSON.parse(text);
-        // evita IDs duplicados
-        const idsLocal = new Set(lista.map(x => x.id));
-        const filtrado = arr.filter(x => !idsLocal.has(x.id));
+        // evita IDs numéricos duplicados
+        const idsLocal = new Set(lista.filter(x => typeof x.id === 'number').map(x => Number(x.id)));
+        const filtrado = arr.filter(x => !idsLocal.has(Number(x.id)));
         lista = [...lista, ...filtrado];
         salvar(); desenhar();
-        alert(`Importados ${filtrado.length} imóveis (ignorados duplicados).`);
+        alert(`Importados ${filtrado.length} imóveis (ignorados duplicados numéricos).`);
       } catch (err) {
         alert('Arquivo inválido.');
       } finally {
@@ -202,16 +301,22 @@
 
     // Exportar
     $('#btn-exportar').addEventListener('click', async () => {
-      // Se quiser, busca imoveis.json atual e mescla (opcional)
+      // Busca imoveis.json atual e mescla (se existir)
       let base = [];
       try {
         const res = await fetch('imoveis.json', {cache:'no-store'});
         if (res.ok) base = await res.json();
       } catch {}
-      // Mescla base + lista (prioriza IDs da lista local)
+      // Mescla base + lista (prioriza IDs numéricos da lista local)
       const mapa = new Map(base.map(x => [x.id, x]));
       for (const i of lista) mapa.set(i.id, i);
-      const final = Array.from(mapa.values()).sort((a,b)=>b.id - a.id);
+      const final = Array.from(mapa.values()).sort((a,b)=>{
+        const an = typeof a.id === 'number', bn = typeof b.id === 'number';
+        if (an && bn) return b.id - a.id;
+        if (an && !bn) return -1;
+        if (!an && bn) return 1;
+        return String(b.id).localeCompare(String(a.id));
+      });
 
       const blob = new Blob([JSON.stringify(final, null, 2)], {type:'application/json'});
       const a = document.createElement('a');

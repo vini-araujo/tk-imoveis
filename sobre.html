@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sobre Nós · TK Matos Imóveis</title>
+    <link rel="stylesheet" href="style.css"/>
+
+    <!-- Inter font (mesmo do index) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script defer src="script.js"></script>
+</head>
+<body class="pg-sobre">
+<header>
+    <div class="container">
+        <img src="imagens/TK logo.jpeg" alt="TK Matos Imóveis" class="logo"/>
+        <nav>
+            <a href="index.html">Início</a>
+           <!-- <a href="index.html?finalidade=comprar#filtros">Comprar</a>
+            <a href="index.html?finalidade=alugar#filtros">Alugar</a> -->
+            <a href="sobre.html">Sobre Nós</a>
+            <a href="contato.html">Contato</a>
+        </nav>
+        <button id="theme-toggle" aria-label="Alternar tema" class="theme-toggle">🌙</button>
+    </div>
+</header>
+
+<section class="hero about-hero">
+    <div class="container">
+        <h2>História, Propósito e Pessoas</h2>
+        <p>Transparência, cuidado e resultado no mercado imobiliário de Salvador.</p>
+    </div>
+</section>
+
+<main class="container">
+    <!-- Bloco Quem Somos -->
+    <section class="sobre-bloco">
+        <div class="sobre-grid">
+            <div>
+                <h2 class="titulo-sec">Quem somos</h2>
+                <p>
+                    Na <strong>TK Matos Imóveis</strong>, conectamos pessoas aos seus lares e investimentos com curadoria
+                    de imóveis, atendimento humano e processos digitais simples. Atuamos com foco em <em>qualidade, confiança e segurança</em>,
+                    unindo experiência de mercado com tecnologia para uma jornada leve — do primeiro contato à assinatura.
+                </p>
+                <p>
+                    Nosso compromisso é <strong>ouvir</strong>, <strong>orientar</strong> e <strong>entregar soluções</strong>
+                    que respeitem o que é mais importante para cada cliente: tempo, orçamento e tranquilidade.
+                </p>
+            </div>
+            <div class="sobre-card">
+                <ul class="bullets">
+                    <li>Atuação em Salvador e região metropolitana</li>
+                    <li>Venda e locação residenciais</li>
+                    <li>Avaliação e preparo do imóvel para o mercado</li>
+                    <li>Acompanhamento jurídico e documental</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destaques/Indicadores -->
+    <section class="sobre-bloco">
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-num">+300</span>
+                <span class="stat-label">atendimentos</span>
+            </div>
+            <div class="stat">
+                <span class="stat-num">98%</span>
+                <span class="stat-label">satisfação</span>
+            </div>
+            <div class="stat">
+                <span class="stat-num">15 dias</span>
+                <span class="stat-label">média de locação*</span>
+            </div>
+            <div class="stat">
+                <span class="stat-num">100%</span>
+                <span class="stat-label">transparência</span>
+            </div>
+        </div>
+        <p class="nota">*métrica ilustrativa; ajuste com seus números reais quando desejar.</p>
+    </section>
+
+    <!-- Valores -->
+    <section class="sobre-bloco">
+        <h2 class="titulo-sec">Nossos valores</h2>
+        <div class="values">
+            <div class="value">
+                <h3>Confiança</h3>
+                <p>Processos claros, documentos organizados e comunicação direta em cada etapa.</p>
+            </div>
+            <div class="value">
+                <h3>Cuidado</h3>
+                <p>Empatia com o momento de vida do cliente para orientar boas decisões.</p>
+            </div>
+            <div class="value">
+                <h3>Curadoria</h3>
+                <p>Imóveis selecionados pelo que mais importa: localização, estado e potencial.</p>
+            </div>
+            <div class="value">
+                <h3>Agilidade</h3>
+                <p>Ferramentas digitais e rotinas enxutas para reduzir prazos e burocracia.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Equipe (opcional, personalize nomes/fotos) -->
+    <section class="sobre-bloco">
+        <h2 class="titulo-sec">Equipe</h2>
+        <div class="team">
+            <article class="team-card">
+                <img src="imagens/team1.jpg" alt="Teresa Matos" loading="lazy">
+                <h3>Teresa Matos</h3>
+                <p>Direção & Atendimento</p>
+            </article>
+            <article class="team-card">
+                <img src="imagens/team2.jpg" alt="Time TK Matos" loading="lazy">
+                <h3>Time TK Matos</h3>
+                <p>Captação & Curadoria</p>
+            </article>
+            <article class="team-card">
+                <img src="imagens/team3.jpg" alt="Suporte e Documentação" loading="lazy">
+                <h3>Suporte</h3>
+                <p>Documentação & Pós-venda</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- Localização / Mapa -->
+    <section class="sobre-bloco mapa-bloco">
+        <h2 class="titulo-sec">Onde estamos</h2>
+
+        <div class="endereco">
+            <p>
+                Rua Rio Grande do Sul, 882, sala 201/202<br>
+                Ed. Empresarial Yvete Salles, Pituba<br>
+                Salvador – BA, CEP 41830-140
+            </p>
+            <p>
+                <a class="btn-sec" target="_blank" rel="noopener"
+                   href="https://www.google.com/maps?q=Rua%20Rio%20Grande%20do%20Sul%2C%20882%2C%20sala%20201%2F202%2C%20Ed.%20Empresarial%20Yvete%20Salles%2C%20Pituba%2C%20Salvador%20-%20BA%2C%2041830-140">
+                    Ver no Google Maps
+                </a>
+            </p>
+        </div>
+
+        <div class="mapa-wrap">
+            <iframe
+                title="Mapa – TK Matos Imóveis"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen
+                src="https://www.google.com/maps?q=Rua%20Rio%20Grande%20do%20Sul%2C%20882%2C%20sala%20201%2F202%2C%20Ed.%20Empresarial%20Yvete%20Salles%2C%20Pituba%2C%20Salvador%20-%20BA%2C%2041830-140&z=16&output=embed">
+            </iframe>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="sobre-bloco cta">
+        <div class="cta-card">
+            <h2>Vamos conversar?</h2>
+            <p>Conte pra gente o que você procura — ajudamos a encontrar o imóvel ideal.</p>
+            <div class="cta-actions">
+                <a class="btn" href="contato.html">Falar com a TK Matos</a>
+                <a class="btn link-whats" target="_blank" rel="noopener" href="https://wa.me/5571996886685?text=Olá!%20Gostaria%20de%20conversar%20sobre%20imóveis.">WhatsApp</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 TK Matos Imóveis · Todos os direitos reservados</p>
+    </div>
+</footer>
+</body>
+</html>
