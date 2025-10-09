@@ -4,4 +4,4 @@ deployment:
     - export DEPLOYPATH=/home/SEU_USUARIO/public_html/
     - /bin/rsync -azh --delete \
         --exclude=".git" --exclude=".github" --exclude="node_modules" \
-        ./ $DEPLOYPATH
+        /bin/rsync -azh --delete dist/ $DEPLOYPATH
