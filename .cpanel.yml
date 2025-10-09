@@ -1,7 +1,7 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/SEU_USUARIO/public_html/
+    - export DEPLOYPATH=/home/tkmatosi/public_html/
     - /bin/rsync -azh --delete \
         --exclude=".git" --exclude=".github" --exclude="node_modules" \
-        /bin/rsync -azh --delete dist/ $DEPLOYPATH
+        ./ $DEPLOYPATH
