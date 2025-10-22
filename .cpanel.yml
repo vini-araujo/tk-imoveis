@@ -1,7 +1,10 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/tkmatosi/public_html
-    - /bin/rsync -azh --delete \
-      --exclude=".git" --exclude=".github" --exclude="node_modules" --exclude=".cpanel.yml" --exclude="README.md" \
-      ./ $DEPLOYPATH
+    - export DEPLOY_SRC="$PWD"
+    - export DEPLOY_DST="$HOME/public_html"   # ajuste se seu site estiver em outra pasta
+    - /bin/rsync -av --delete \
+        --exclude ".git" \
+        --exclude ".github" \
+        --exclude "README.md" \
+        "$DEPLOY_SRC"/ "$DEPLOY_DST"/
