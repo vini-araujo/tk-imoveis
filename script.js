@@ -263,11 +263,26 @@ function render() {
   for (const i of lista) {
     const card = document.createElement('div');
     card.className = 'card';
-    const capa = (Array.isArray(i.imagens) && i.imagens[0]) ? i.imagens[0] : 'imagens/casa1.jpeg';
+    const imagens = Array.isArray(i.imagens) && i.imagens.length ? i.imagens : ['imagens/casa1.jpeg'];
     const precoFmt = formatarPreco(i.preco, i.finalidade);
 
     card.innerHTML = `
-      <img class="card-capa" src="${capa}" alt="${i.titulo}"/>
+      <div class="card-gallery" data-id="${i.id}">
+        <div class="swiper card-swiper">
+          <div class="swiper-wrapper">
+            ${imagens.map((src, idx) => `
+              <div class="swiper-slide">
+                <img src="${src}" alt="${i.titulo} - Foto ${idx + 1}" loading="${idx === 0 ? 'eager' : 'lazy'}" onerror="this.src='imagens/casa1.jpeg'">
+              </div>
+            `).join('')}
+          </div>
+          ${imagens.length > 1 ? `
+            <div class="swiper-button-prev card-swiper-prev"></div>
+            <div class="swiper-button-next card-swiper-next"></div>
+            <div class="swiper-pagination card-swiper-pagination"></div>
+          ` : ''}
+        </div>
+      </div>
       <h3>${i.titulo}</h3>
       <div class="badges">
         ${i.finalidade ? `<span class="badge">${capitalize(i.finalidade)}</span>` : ''}
@@ -287,11 +302,48 @@ function render() {
         <a class="btn link-whats" target="_blank" rel="noopener" href="${montarWhatsLink(i)}">WhatsApp</a>
       </div>
     `;
-    // clique na capa abre o modal com slider
-   card.querySelector('.card-capa')?.addEventListener('click', () => abrirModalImovel(i));
+    
+    // clique na galeria abre o modal com slider (mas não interfere com o drag)
+    card.querySelector('.card-gallery')?.addEventListener('click', (e) => {
+      // Só abre o modal se não foi um drag/swipe
+      if (!e.target.closest('.swiper-button-prev') && !e.target.closest('.swiper-button-next') && !e.target.closest('.swiper-pagination')) {
+        abrirModalImovel(i);
+      }
+    });
     frag.appendChild(card);
   }
   els.lista?.appendChild(frag);
+
+  // Inicializar Swipers dos cards após um pequeno delay para garantir que o DOM está pronto
+  setTimeout(() => {
+    els.lista?.querySelectorAll('.card-swiper').forEach(swiperEl => {
+      const slides = swiperEl.querySelectorAll('.swiper-slide');
+      if (slides.length > 1) {
+        new Swiper(swiperEl, {
+          loop: true,
+          spaceBetween: 0,
+          pagination: {
+            el: swiperEl.querySelector('.card-swiper-pagination'),
+            clickable: true,
+            dynamicBullets: true,
+          },
+          navigation: {
+            nextEl: swiperEl.querySelector('.card-swiper-next'),
+            prevEl: swiperEl.querySelector('.card-swiper-prev'),
+          },
+          autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          },
+          effect: 'slide',
+          speed: 500,
+          allowTouchMove: true,
+          grabCursor: true,
+        });
+      }
+    });
+  }, 100);
 
   // actions: botão Detalhes
   els.lista?.querySelectorAll('button[data-acao="detalhes"]').forEach(btn => {

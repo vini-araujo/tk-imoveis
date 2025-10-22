@@ -131,6 +131,83 @@ main h2{
 .card img{
   width:100%; height: clamp(240px, 26vw, 280px); object-fit:cover; display:block;
 }
+
+/* Card Gallery */
+.card-gallery{
+  position: relative;
+  width: 100%;
+  height: clamp(240px, 26vw, 280px);
+  margin-bottom: .8rem;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .2s ease;
+}
+
+.card-gallery:hover{ 
+  transform: scale(1.02); 
+}
+
+.card-swiper{
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.card-swiper:active{
+  cursor: grabbing;
+}
+
+.card-swiper .swiper-slide{
+  width: 100%;
+  height: 100%;
+}
+
+.card-swiper .swiper-slide img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+/* Card Swiper Navigation */
+.card-swiper-prev,
+.card-swiper-next{
+  color: white;
+  background: rgba(0,0,0,0.5);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-top: -15px;
+}
+
+.card-swiper-prev:after,
+.card-swiper-next:after{
+  font-size: 14px;
+}
+
+.card-swiper-prev{
+  left: 10px;
+}
+
+.card-swiper-next{
+  right: 10px;
+}
+
+/* Card Swiper Pagination */
+.card-swiper-pagination{
+  bottom: 10px;
+}
+
+.card-swiper-pagination .swiper-pagination-bullet{
+  background: rgba(255,255,255,0.5);
+  opacity: 1;
+}
+
+.card-swiper-pagination .swiper-pagination-bullet-active{
+  background: var(--verde);
+}
 .card h3{ margin:.9rem .9rem .2rem; font-size:1.1rem; letter-spacing:-.01em; }
 .card p{ margin:.25rem .9rem; color:var(--cinza-2); }
 .badges{ display:flex; flex-wrap:wrap; gap:.45rem; margin:.4rem .9rem .2rem; }
@@ -163,10 +240,16 @@ footer{
   background:#fff; border-top:1px solid var(--borda); text-align:center; padding:1rem 0; color:var(--cinza-2); font-size:.95rem;
 }
 
-/* CONTATO (mantido) */
+/* CONTATO */
 .fundo-contato{
-  background:url('imagens/imgContato.jpeg') no-repeat center/cover fixed;
-  min-height:100vh; padding:4rem 2rem; display:flex; justify-content:center; align-items:center;
+  background:url('imagens/imgContato.jpeg') no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  min-height:100vh; 
+  padding:4rem 2rem; 
+  display:flex; 
+  justify-content:center; 
+  align-items:center;
 }
 .card-contato{
   background-color: rgba(255,255,255,.9); padding:2rem; border-radius:16px;
@@ -263,6 +346,23 @@ html[data-theme="dark"] .about-hero{
   margin: 1.4rem 0;
 }
 
+.sobre-content{
+  margin-bottom: 1rem;
+}
+
+.sobre-content p{
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+.separator{
+  text-align: center;
+  font-size: 1.5rem;
+  color: var(--verde);
+  margin: 2rem 0;
+  font-weight: 300;
+}
+
 .sobre-grid{
   display: grid;
   gap: 1.2rem;
@@ -311,8 +411,20 @@ html[data-theme="dark"] .sobre-card{
 /* Valores */
 .values{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+}
+
+@media (max-width: 900px){
+  .values{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px){
+  .values{
+    grid-template-columns: 1fr;
+  }
 }
 .value{
   background: var(--branco);
@@ -339,10 +451,78 @@ html[data-theme="dark"] .sobre-card{
 }
 .team-card img{
   width: 100%;
-  height: 220px;
+  height: 280px;
   object-fit: cover;
+  object-position: center top;
   border-radius: 12px;
   margin-bottom: .6rem;
+}
+
+.team-description{
+  font-size: .9rem;
+  line-height: 1.5;
+  color: var(--cinza-2);
+  margin-top: .8rem;
+  text-align: left;
+}
+
+/* Founder Layout */
+.founder-layout{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+}
+
+.founder-content h3{
+  margin: 0 0 .5rem;
+  font-size: 1.4rem;
+  color: var(--verde);
+}
+
+.founder-title{
+  font-size: 1rem;
+  color: var(--cinza-2);
+  margin: 0 0 1rem;
+  font-weight: 600;
+}
+
+.founder-description{
+  font-size: .95rem;
+  line-height: 1.6;
+  color: var(--cinza);
+  margin: 0;
+}
+
+.founder-image{
+  flex-shrink: 0;
+}
+
+.founder-image img{
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  border: 4px solid var(--verde);
+  box-shadow: var(--sombra);
+}
+
+@media (max-width: 768px){
+  .founder-layout{
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  
+  .founder-image{
+    justify-self: center;
+  }
+  
+  .founder-image img{
+    width: 150px;
+    height: 150px;
+  }
 }
 
 /* CTA */
