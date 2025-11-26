@@ -61,7 +61,7 @@ function injectListLD(lista) {
   const s = document.createElement('script');
   s.type = 'application/ld+json';
   s.dataset.ld = 'list';
-  s.textContent = JSON.stringify({ "@context":"https://schema.org", "@graph": graph });
+  s.textContent = JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
   document.head.appendChild(s);
 }
 
@@ -82,21 +82,21 @@ const DEFAULT_IMOVEIS = [
     titulo: "Apartamento 2/4 no Rio Vermelho", preco: 320000, bairro: "Rio Vermelho",
     cidade: "Salvador", uf: "BA", area: 78, quartos: 2, suites: 1, banheiros: 2, vagas: 1,
     descricao: "2 quartos, 1 suíte, 78m², 1 vaga de garagem.",
-    condominio: 690, iptu: 1200, tags: ["varanda","elevador"], imagens: ["imagens/casa1.jpeg","imagens/casa1b.jpeg"], destaque: true
+    condominio: 690, iptu: 1200, tags: ["varanda", "elevador"], imagens: ["imagens/casa1.jpeg", "imagens/casa1b.jpeg"], destaque: true
   },
   {
     id: 2, criadoEm: "2025-09-08T12:30:00Z", finalidade: "comprar", tipo: "Casa",
     titulo: "Casa ampla no Caminho das Árvores", preco: 870000, bairro: "Caminho das Árvores",
     cidade: "Salvador", uf: "BA", area: 200, quartos: 3, suites: 1, banheiros: 3, vagas: 2,
     descricao: "3 quartos, 200m², área gourmet.",
-    condominio: 0, iptu: 2800, tags: ["área gourmet","quintal"], imagens: ["imagens/casa1.jpeg"], destaque: false
+    condominio: 0, iptu: 2800, tags: ["área gourmet", "quintal"], imagens: ["imagens/casa1.jpeg"], destaque: false
   },
   {
     id: 3, criadoEm: "2025-09-09T18:00:00Z", finalidade: "comprar", tipo: "Studio",
     titulo: "Studio mobiliado na Pituba", preco: 220000, bairro: "Pituba",
     cidade: "Salvador", uf: "BA", area: 35, quartos: 0, suites: 0, banheiros: 1, vagas: 1,
     descricao: "Studio compacto e moderno, ótima localização.",
-    condominio: 550, iptu: 900, tags: ["mobiliado","varanda"], imagens: ["imagens/casa1.jpeg","imagens/casa1b.jpeg"], destaque: true
+    condominio: 550, iptu: 900, tags: ["mobiliado", "varanda"], imagens: ["imagens/casa1.jpeg", "imagens/casa1b.jpeg"], destaque: true
   }
 ];
 
@@ -121,10 +121,12 @@ const els = {
   filtrosForm: $("#filtros"),
   modal: $("#modal"),
   modalBody: $("#modal-body"),
-  modalClose: document.querySelector(".modal-close")
+  modalClose: document.querySelector(".modal-close"),
+  fFavoritos: $("#f-favoritos") // [NOVO] Checkbox de favoritos
 };
 
 let IMOVEIS = [];
+let FAVORITOS = JSON.parse(localStorage.getItem('tk_favoritos') || '[]'); // [NOVO] Carrega favoritos
 
 // ====== Init ======
 init();
@@ -162,8 +164,8 @@ async function carregarDados() {
       descricao: i.descricao || '',
       condominio: Number(i.condominio || 0),
       iptu: Number(i.iptu || 0),
-      tags: Array.isArray(i.tags) ? i.tags : String(i.tags || '').split(',').map(s=>s.trim()).filter(Boolean),
-      imagens: Array.isArray(i.imagens) ? i.imagens : String(i.imagens || '').split('\n').map(s=>s.trim()).filter(Boolean),
+      tags: Array.isArray(i.tags) ? i.tags : String(i.tags || '').split(',').map(s => s.trim()).filter(Boolean),
+      imagens: Array.isArray(i.imagens) ? i.imagens : String(i.imagens || '').split('\n').map(s => s.trim()).filter(Boolean),
       destaque: (i.destaque === true) || String(i.destaque || '').toLowerCase() === 'true'
     })).filter(i => i.id && i.titulo);
   } catch (e) {
@@ -213,10 +215,13 @@ function filtrar() {
     suites: parseInt(els.fSuites?.value || '0', 10),
     vagas: parseInt(els.fVagas?.value || '0', 10),
     areaMin: parseInt(els.fAreaMin?.value || '0', 10),
-    busca: (els.fBusca?.value || '').trim().toLowerCase()
+    areaMin: parseInt(els.fAreaMin?.value || '0', 10),
+    busca: (els.fBusca?.value || '').trim().toLowerCase(),
+    apenasFavoritos: els.fFavoritos?.checked || false // [NOVO]
   };
 
   let lista = IMOVEIS.filter(i => {
+    if (q.apenasFavoritos && !FAVORITOS.includes(i.id)) return false; // [NOVO] Filtra favoritos
     if (q.finalidade && i.finalidade?.toLowerCase() !== q.finalidade) return false;
     if (q.tipo && i.tipo !== q.tipo) return false;
     if (q.bairro && i.bairro !== q.bairro) return false;
@@ -238,9 +243,9 @@ function filtrar() {
 
   const ord = els.fOrdenar?.value || 'recentes';
   lista.sort((a, b) => {
-    if (ord === 'preco-asc') return (a.preco||0) - (b.preco||0);
-    if (ord === 'preco-desc') return (b.preco||0) - (a.preco||0);
-    if (ord === 'area-desc') return (b.area||0) - (a.area||0);
+    if (ord === 'preco-asc') return (a.preco || 0) - (b.preco || 0);
+    if (ord === 'preco-desc') return (b.preco || 0) - (a.preco || 0);
+    if (ord === 'area-desc') return (b.area || 0) - (a.area || 0);
     return new Date(b.criadoEm) - new Date(a.criadoEm);
   });
 
@@ -263,16 +268,36 @@ function render() {
   for (const i of lista) {
     const card = document.createElement('div');
     card.className = 'card';
-    const capa = (Array.isArray(i.imagens) && i.imagens[0]) ? i.imagens[0] : 'imagens/casa1.jpeg';
+    const imagens = Array.isArray(i.imagens) && i.imagens.length ? i.imagens : ['imagens/casa1.jpeg'];
     const precoFmt = formatarPreco(i.preco, i.finalidade);
 
+    const isFav = FAVORITOS.includes(i.id);
+    const heartClass = isFav ? 'favoritado' : '';
+    const heartIcon = isFav ? '♥' : '♡';
+
     card.innerHTML = `
-      <img class="card-capa" src="${capa}" alt="${i.titulo}"/>
-      <h3>${i.titulo}</h3>
+      <button class="btn-fav ${heartClass}" data-id="${i.id}" aria-label="${isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}">${heartIcon}</button>
+      <div class="card-gallery" data-id="${i.id}">
+        <div class="swiper card-swiper">
+          <div class="swiper-wrapper">
+            ${imagens.map((src, idx) => `
+              <div class="swiper-slide">
+                <img src="${src}" alt="${escapeHTML(i.titulo)} - Foto ${idx + 1}" loading="${idx === 0 ? 'eager' : 'lazy'}" onerror="this.src='imagens/casa1.jpeg'">
+              </div>
+            `).join('')}
+          </div>
+          ${imagens.length > 1 ? `
+            <div class="swiper-button-prev card-swiper-prev"></div>
+            <div class="swiper-button-next card-swiper-next"></div>
+            <div class="swiper-pagination card-swiper-pagination"></div>
+          ` : ''}
+        </div>
+      </div>
+      <h3>${escapeHTML(i.titulo)}</h3>
       <div class="badges">
         ${i.finalidade ? `<span class="badge">${capitalize(i.finalidade)}</span>` : ''}
-        ${i.tipo ? `<span class="badge">${i.tipo}</span>` : ''}
-        ${i.bairro ? `<span class="badge">${i.bairro}</span>` : ''}
+        ${i.tipo ? `<span class="badge">${escapeHTML(i.tipo)}</span>` : ''}
+        ${i.bairro ? `<span class="badge">${escapeHTML(i.bairro)}</span>` : ''}
         ${i.area ? `<span class="badge">${i.area} m²</span>` : ''}
         ${(i.quartos ?? 0) ? `<span class="badge">${i.quartos} qt</span>` : ''}
         ${(i.suites ?? 0) ? `<span class="badge">${i.suites} st</span>` : ''}
@@ -280,18 +305,55 @@ function render() {
       </div>
       <p><strong>Preço:</strong> ${precoFmt}</p>
       ${i.condominio ? `<p><strong>Condomínio:</strong> ${toBRL(i.condominio)}/mês</p>` : ''}
-      ${i.iptu ? `<p><strong>IPTU:</strong> ${toBRL(i.iptu)}${i.finalidade==='alugar' ? '/mês' : '/ano'}</p>` : ''}
-      <p>${i.descricao || ''}</p>
+      ${i.iptu ? `<p><strong>IPTU:</strong> ${toBRL(i.iptu)}${i.finalidade === 'alugar' ? '/mês' : '/ano'}</p>` : ''}
+      <p>${escapeHTML(i.descricao || '')}</p>
       <div class="acoes">
         <button class="btn" data-acao="detalhes" data-id="${i.id}">Detalhes</button>
         <a class="btn link-whats" target="_blank" rel="noopener" href="${montarWhatsLink(i)}">WhatsApp</a>
       </div>
     `;
-    // clique na capa abre o modal com slider
-   card.querySelector('.card-capa')?.addEventListener('click', () => abrirModalImovel(i));
+
+    // clique na galeria abre o modal com slider (mas não interfere com o drag)
+    card.querySelector('.card-gallery')?.addEventListener('click', (e) => {
+      // Só abre o modal se não foi um drag/swipe
+      if (!e.target.closest('.swiper-button-prev') && !e.target.closest('.swiper-button-next') && !e.target.closest('.swiper-pagination')) {
+        abrirModalImovel(i);
+      }
+    });
     frag.appendChild(card);
   }
   els.lista?.appendChild(frag);
+
+  // Inicializar Swipers dos cards após um pequeno delay para garantir que o DOM está pronto
+  setTimeout(() => {
+    els.lista?.querySelectorAll('.card-swiper').forEach(swiperEl => {
+      const slides = swiperEl.querySelectorAll('.swiper-slide');
+      if (slides.length > 1) {
+        new Swiper(swiperEl, {
+          loop: true,
+          spaceBetween: 0,
+          pagination: {
+            el: swiperEl.querySelector('.card-swiper-pagination'),
+            clickable: true,
+            dynamicBullets: true,
+          },
+          navigation: {
+            nextEl: swiperEl.querySelector('.card-swiper-next'),
+            prevEl: swiperEl.querySelector('.card-swiper-prev'),
+          },
+          autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          },
+          effect: 'slide',
+          speed: 500,
+          allowTouchMove: true,
+          grabCursor: true,
+        });
+      }
+    });
+  }, 100);
 
   // actions: botão Detalhes
   els.lista?.querySelectorAll('button[data-acao="detalhes"]').forEach(btn => {
@@ -299,6 +361,15 @@ function render() {
       const id = parseInt(btn.dataset.id, 10);
       const imovel = IMOVEIS.find(x => x.id === id);
       abrirModalImovel(imovel); // <— aqui também
+    });
+  });
+
+  // actions: botão Favorito
+  els.lista?.querySelectorAll('.btn-fav').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // não abrir modal/galeria
+      const id = parseInt(btn.dataset.id, 10);
+      toggleFavorito(id);
     });
   });
 
@@ -324,22 +395,47 @@ function toBRL(v) {
 function toBRLnum(v) {
   return Number(v || 0).toLocaleString('pt-BR');
 }
-function capitalize(s) { return (s||'').charAt(0).toUpperCase() + (s||'').slice(1); }
+function toBRLnum(v) {
+  return Number(v || 0).toLocaleString('pt-BR');
+}
+function capitalize(s) { return (s || '').charAt(0).toUpperCase() + (s || '').slice(1); }
+
+// [NOVO] Security Helper
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// [NOVO] Toggle Favorito
+function toggleFavorito(id) {
+  if (FAVORITOS.includes(id)) {
+    FAVORITOS = FAVORITOS.filter(fid => fid !== id);
+  } else {
+    FAVORITOS.push(id);
+  }
+  localStorage.setItem('tk_favoritos', JSON.stringify(FAVORITOS));
+  render(); // Re-render para atualizar ícones e filtro se ativo
+}
 
 // ====== SLIDER (galeria) ======
-function createSlider(images, startIndex = 0){
+function createSlider(images, startIndex = 0) {
   const imgs = (Array.isArray(images) && images.length) ? images : ['imagens/casa1.jpeg'];
 
   const root = document.createElement('div');
   root.className = 'slider';
-  root.setAttribute('role','region');
-  root.setAttribute('aria-label','Galeria de imagens do imóvel');
+  root.setAttribute('role', 'region');
+  root.setAttribute('aria-label', 'Galeria de imagens do imóvel');
 
   const track = document.createElement('div');
   track.className = 'slider-track';
   root.appendChild(track);
 
-  imgs.forEach(src=>{
+  imgs.forEach(src => {
     const img = document.createElement('img');
     img.loading = 'lazy';
     img.src = src;
@@ -357,29 +453,29 @@ function createSlider(images, startIndex = 0){
 
   const dots = document.createElement('div');
   dots.className = 'slider-dots';
-  imgs.forEach((_,i)=>{
+  imgs.forEach((_, i) => {
     const b = document.createElement('button');
-    b.addEventListener('click', ()=> goTo(i));
+    b.addEventListener('click', () => goTo(i));
     dots.appendChild(b);
   });
   root.appendChild(dots);
 
-  let index = Math.min(Math.max(startIndex,0), imgs.length-1);
+  let index = Math.min(Math.max(startIndex, 0), imgs.length - 1);
   let width = 0;
-  const updateSize = ()=> {
+  const updateSize = () => {
     width = root.clientWidth;
     track.style.transform = `translateX(${-index * width}px)`;
   };
-  const updateDots = ()=>{
-    dots.querySelectorAll('button').forEach((b,i)=> b.classList.toggle('active', i===index));
+  const updateDots = () => {
+    dots.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === index));
   };
-  const goTo = (i)=> {
+  const goTo = (i) => {
     index = (i + imgs.length) % imgs.length;
     track.style.transform = `translateX(${-index * width}px)`;
     updateDots();
   };
-  const next = ()=> goTo(index+1);
-  const prev = ()=> goTo(index-1);
+  const next = () => goTo(index + 1);
+  const prev = () => goTo(index - 1);
 
   // eventos
   btnNext.addEventListener('click', next);
@@ -388,27 +484,27 @@ function createSlider(images, startIndex = 0){
 
   // teclado
   root.tabIndex = 0;
-  root.addEventListener('keydown', (e)=>{
+  root.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') next();
     if (e.key === 'ArrowLeft') prev();
   });
 
   // swipe
   let startX = 0, dragging = false;
-  root.addEventListener('touchstart', (e)=>{ dragging = true; startX = e.touches[0].clientX; }, {passive:true});
-  root.addEventListener('touchmove', (e)=>{
+  root.addEventListener('touchstart', (e) => { dragging = true; startX = e.touches[0].clientX; }, { passive: true });
+  root.addEventListener('touchmove', (e) => {
     if (!dragging) return;
     const dx = e.touches[0].clientX - startX;
-    track.style.transform = `translateX(${dx - index*width}px)`;
-  }, {passive:true});
-  root.addEventListener('touchend', (e)=>{
+    track.style.transform = `translateX(${dx - index * width}px)`;
+  }, { passive: true });
+  root.addEventListener('touchend', (e) => {
     if (!dragging) return; dragging = false;
     const dx = e.changedTouches[0].clientX - startX;
     if (dx < -50) next(); else if (dx > 50) prev(); else goTo(index);
   });
 
   // init
-  requestAnimationFrame(()=>{
+  requestAnimationFrame(() => {
     updateSize();
     updateDots();
   });
@@ -422,7 +518,7 @@ function abrirModalImovel(i, fotoIndex = 0) {
 
   // ELEMENTOS BASE
   const modal = els.modal;
-  const body  = els.modalBody;
+  const body = els.modalBody;
   const content = modal.querySelector('.modal-content');
 
   // ===== [NOVO] Cabeçalho do modal com o título (fora da área rolável) =====
@@ -465,7 +561,7 @@ function abrirModalImovel(i, fotoIndex = 0) {
   const grid = document.createElement('div');
   grid.className = 'imv-grid';
 
-  const addLinha = (label, valor, destaque=false) => {
+  const addLinha = (label, valor, destaque = false) => {
     if (valor === undefined || valor === null || valor === '') return;
     const row = document.createElement('div'); row.className = 'imv-row' + (destaque ? ' imv-row--destaque' : '');
     const l = document.createElement('div'); l.className = 'imv-lbl'; l.textContent = label;
@@ -552,8 +648,8 @@ function abrirModalImovel(i, fotoIndex = 0) {
 }
 
 // helpers usados acima
-function toBRL(v){ try { return Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});} catch { return v; } }
-function capFirst(s){ return (s||'').charAt(0).toUpperCase() + (s||'').slice(1); }
+function toBRL(v) { try { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); } catch { return v; } }
+function capFirst(s) { return (s || '').charAt(0).toUpperCase() + (s || '').slice(1); }
 function fecharModal() {
   els.modal.classList.remove('show');
   els.modal.setAttribute('aria-hidden', 'true');
@@ -562,7 +658,7 @@ function fecharModal() {
 }
 
 // ===== Modo Escuro (toggle + persistência) =====
-(function themeInit(){
+(function themeInit() {
   const STORAGE_KEY = 'tk_theme';
   const root = document.documentElement;
   const btn = document.getElementById('theme-toggle');
@@ -580,7 +676,7 @@ function fecharModal() {
     });
   }
 
-  function applyTheme(mode){
+  function applyTheme(mode) {
     root.setAttribute('data-theme', mode);
     localStorage.setItem(STORAGE_KEY, mode);
     if (btn) {
@@ -599,9 +695,9 @@ function renderSwiper(container, imagens = []) {
   container.innerHTML = `
     <div class="swiper swiper-main">
       <div class="swiper-wrapper">
-        ${imagens.map((src,i)=>`
+        ${imagens.map((src, i) => `
           <div class="swiper-slide">
-            <img src="${src}" alt="Foto ${i+1} do imóvel" loading="${i===0?'eager':'lazy'}" decoding="async" onerror="this.src='imagens/casa1.jpeg'">
+            <img src="${src}" alt="Foto ${i + 1} do imóvel" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async" onerror="this.src='imagens/casa1.jpeg'">
           </div>`).join('')}
       </div>
       <div class="swiper-button-prev"></div>
@@ -612,15 +708,15 @@ function renderSwiper(container, imagens = []) {
     ${imagens.length > 1 ? `
     <div class="swiper swiper-thumbs">
       <div class="swiper-wrapper">
-        ${imagens.map((src,i)=>`
+        ${imagens.map((src, i) => `
           <div class="swiper-slide">
-            <img src="${src}" alt="Miniatura ${i+1}" onerror="this.src='imagens/casa1.jpeg'">
+            <img src="${src}" alt="Miniatura ${i + 1}" onerror="this.src='imagens/casa1.jpeg'">
           </div>`).join('')}
       </div>
     </div>` : ''}
   `;
 
-  const mainEl   = container.querySelector('.swiper-main');
+  const mainEl = container.querySelector('.swiper-main');
   const thumbsEl = container.querySelector('.swiper-thumbs');
 
   let thumbsSwiper = null;
@@ -642,6 +738,8 @@ function renderSwiper(container, imagens = []) {
     navigation: { nextEl: mainEl.querySelector('.swiper-button-next'), prevEl: mainEl.querySelector('.swiper-button-prev') },
     pagination: { el: mainEl.querySelector('.swiper-pagination'), clickable: true },
     thumbs: thumbsSwiper ? { swiper: thumbsSwiper } : undefined,
+    observer: true,
+    observeParents: true,
   });
 
   return mainSwiper;

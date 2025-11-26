@@ -35,9 +35,27 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TK Matos Imóveis</title>
-    <link rel="stylesheet" href="style.css"/>
+    <meta name="description"
+          content="Encontre seu novo lar com a TK Matos Imóveis. Apartamentos, casas e studios em Salvador com qualidade e segurança.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://seusite.com.br/">
+    <meta property="og:title" content="TK Matos Imóveis - Seu novo lar em Salvador">
+    <meta property="og:description" content="Imóveis selecionados com qualidade, confiança e segurança em Salvador.">
+    <meta property="og:image" content="https://seusite.com.br/imagens/TKlogo.jpeg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://seusite.com.br/">
+    <meta property="twitter:title" content="TK Matos Imóveis - Seu novo lar em Salvador">
+    <meta property="twitter:description"
+          content="Imóveis selecionados com qualidade, confiança e segurança em Salvador.">
+    <meta property="twitter:image" content="https://seusite.com.br/imagens/TKlogo.jpeg">
+
+    <link rel="stylesheet" href="style.css" />
     <script defer src="script.js"></script>
     <!-- Inter font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -49,10 +67,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 </head>
+
 <body>
 <header>
     <div class="container">
-        <img src="imagens/TK logo.jpeg" alt="TK Matos Imóveis" class="logo"/>
+        <img src="imagens/TK logo.jpeg" alt="TK Matos Imóveis" class="logo" />
         <nav>
             <a href="index.html">Início</a>
             <a href="sobre.html">Sobre Nós</a>
@@ -100,11 +119,11 @@
             </label>
             <label>
                 Preço mín.
-                <input id="f-preco-min" type="number" placeholder="0" min="0" step="1000"/>
+                <input id="f-preco-min" type="number" placeholder="0" min="0" step="1000" />
             </label>
             <label>
                 Preço máx.
-                <input id="f-preco-max" type="number" placeholder="∞" min="0" step="1000"/>
+                <input id="f-preco-max" type="number" placeholder="∞" min="0" step="1000" />
             </label>
         </div>
 
@@ -139,11 +158,11 @@
             </label>
             <label>
                 Área mín. (m²)
-                <input id="f-area-min" type="number" placeholder="0" min="0" step="10"/>
+                <input id="f-area-min" type="number" placeholder="0" min="0" step="10" />
             </label>
             <label>
                 Buscar
-                <input id="f-busca" type="text" placeholder="Título, descrição, tag..."/>
+                <input id="f-busca" type="text" placeholder="Título, descrição, tag..." />
             </label>
             <label>
                 Ordenar
@@ -153,6 +172,10 @@
                     <option value="preco-desc">Preço: maior → menor</option>
                     <option value="area-desc">Área: maior → menor</option>
                 </select>
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="f-favoritos">
+                Ver Favoritos ❤️
             </label>
             <div class="filtros-actions">
                 <button type="reset" class="btn-sec">Limpar</button>
@@ -182,4 +205,5 @@
     </div>
 </div>
 </body>
+
 </html>
