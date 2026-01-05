@@ -159,19 +159,20 @@ nav a:hover {
 }
 
 .theme-toggle {
-  margin-left: .5rem;
-  border: 1px solid var(--borda);
-  background: var(--branco);
-  color: var(--cinza);
-  border-radius: 12px;
-  padding: .55rem .75rem;
-  cursor: pointer;
-  font-weight: 700;
-  box-shadow: var(--sombra);
+  background-color: #f0f0f0; /* Light background for better contrast */
+      color: #333; /* Dark text for readability */
+      border: 2px solid #333; /* Add a border for better visibility */
+      border-radius: 50%; /* Make it circular */
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
 }
 
 .theme-toggle:hover {
-  filter: brightness(.96);
+  background-color: #333; /* Dark background on hover */
+      color: #fff; /* Light text on hover */
 }
 
 /* Títulos */
@@ -1339,4 +1340,18 @@ html[data-theme="dark"] .imv-badge {
     max-height: 100vh;
     border-radius: 0;
   }
+}
+
+.fundadora-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.fundadora-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    float: left;
 }
